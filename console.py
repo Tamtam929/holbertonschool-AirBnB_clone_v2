@@ -2,7 +2,6 @@
 """ Console Module """
 import cmd
 import sys
-import shlex
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -136,12 +135,6 @@ class HBNBCommand(cmd.Cmd):
             obj = eval(args[0])(**kwargs)
         print(obj.id)
         obj.save()
-
-
-def help_create(self):
-    """ Help information for the create method """
-    print("Creates a class of any type")
-    print("[Usage]: create <className>\n")
 
     def help_create(self):
         """ Help information for the create method """
