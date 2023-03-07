@@ -33,7 +33,7 @@ class TestDBStorage(unittest.TestCase):
         """test pycodestyle style"""
         style = pycodestyle.StyleGuide(quiet=True)
         p = style.check_files(['models/engine/db_storage.py'])
-        self.assertEqual(p.total_errors, 0, "fix pep8")
+        self.assertEqual(p.total_errors, 0, "pycodestyle")
 
     @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db', 'db')
     def test_add(self):
