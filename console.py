@@ -113,42 +113,29 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
-
-        """ Create an object of any class"""
-        # Posix to preserve the quotation marks (to identify str)
-        arg = shlex.split(args, posix=False)
-        if arg == []:
+    def do_create(self, line):
+        """Creates objects with different parameters"""
+        if not line:
             print("** class name missing **")
             return
-        elif arg[0] not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[arg[0]]()
-        # Param Treatment
-        # Loop with start on first param
-        for param in arg[1:]:
-            paramAux = param
-            # Split key=value into tokens
-            paramAux = paramAux.split("=")
-            key = str(paramAux[0])
-            value = paramAux[1]
-            # Identifying if value is inside quotes
-            if (value[0] == '"') and (value[-1] == '"'):
-                value = value.replace('"', "")
-                if "_" in value:
-                    value = value.replace("_", " ")
+        args = line.split()
+        kwargs = {}
+        for param in range(1, len(args)):
+            ky, vl = args[param].split("=")
+            if vl[0] == '"':
+                vl = vl.replace('_', ' ').strip('"')
             else:
                 try:
-                    value = int(value)
-                except Exception:
-                    try:
-                        value = float(value)
-                    except Exception:
-                        continue
-            # Setting attribute to instance
-            setattr(new_instance, key, value)
-        new_instance.save()
+                    vl = eval(vl)
+                except (SyntaxError, NameError):
+                    continue
+            kwargs[ky] = vl
+        if len(kwargs) == 0:
+            obj = eval(args[0])()
+        else:
+            obj = eval(args[0])(**kwargs)
+        print(obj.id)
+        obj.save()
 
 
 def help_create(self):
