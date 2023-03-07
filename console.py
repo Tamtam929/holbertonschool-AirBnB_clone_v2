@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import shlex
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -37,7 +38,6 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
-
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
@@ -113,7 +113,46 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
+    def do_create(self, args)
+ 
+        """ Create an object of any class"""
+        # Posix to preserve the quotation marks (to identify str)
+        arg = shlex.split(args, posix=False)
+
+        if arg == []:
+            print("** class name missing **")
+            return
+
+        elif arg[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+
+        new_instance = HBNBCommand.classes[arg[0]]()
+        # Param Treatment
+        # Loop with start on first param
+        for param in arg[1:]:
+            paramAux = param
+            # Split key=value into tokens
+            paramAux = paramAux.split("=")
+            key = str(paramAux[0])
+            value = paramAux[1]
+            # Identifying if value is inside quotes
+            if (value[0] == '"') and (value[-1] == '"'):
+                value = value.replace('"', "")
+                if "_" in value:
+                    value = value.replace("_", " ")
+            else:
+                try:
+                    value = int(value)
+                except Exception:
+                    try:
+                        value = float(value)
+                    except Exception:
+                        continue
+            # Setting attribute to instance
+            setattr(new_instance, key, value)
+        new_instance.save()
+    
         """ Creates a new instance of a class"""
         args = args.split()
         if len(args) < 1:
@@ -145,7 +184,6 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
         new_instance.__dict__.update(params)
         print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -208,7 +246,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -227,11 +265,10 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            for k, v in storage.all(self.classes[args]).items():
+                print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -341,5 +378,7 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
+
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
+    
