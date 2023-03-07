@@ -113,20 +113,17 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args)
- 
+    def do_create(self, args):
+
         """ Create an object of any class"""
         # Posix to preserve the quotation marks (to identify str)
         arg = shlex.split(args, posix=False)
-
         if arg == []:
             print("** class name missing **")
             return
-
         elif arg[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-
         new_instance = HBNBCommand.classes[arg[0]]()
         # Param Treatment
         # Loop with start on first param
@@ -152,38 +149,44 @@ class HBNBCommand(cmd.Cmd):
             # Setting attribute to instance
             setattr(new_instance, key, value)
         new_instance.save()
-    
-        """ Creates a new instance of a class"""
-        args = args.split()
-        if len(args) < 1:
-            print("** class name missing **")
-            return
-        class_name = args[0]
-        if class_name not in self.classes:
-            print("** class doesn't exist **")
-            return
-        params = {}
-        for param in args[1]:
-            if "=" not in param:
+
+    """ Creates a new instance of a class"""
+    args = args.split()
+    if len(args) < 1:
+        print("** class name missing **")
+        return
+    class_name = args[0]
+    if class_name not in self.classes:
+        print("** class doesn't exist **")
+        return
+    params = {}
+    for param in args[1]:
+        if "=" not in param:
+            continue
+        key, value = param.split("=")
+        if not value:
+            continue
+        if value[0] == '"' and value[-1] == '"' and "\\" not in value[:-1]:
+            value = value[1:-1].replace('_', ' ')
+        else:
+            try:
+                if "." in value:
+                    value = float(value)
+                else:
+                    value = int(value)
+            except ValueError:
                 continue
-            key, value = param.split("=")
-            if not value:
-                continue
-            if value[0] == '"' and value[-1] == '"' and "\\" not in value[:-1]:
-                value = value[1:-1].replace('_', ' ')
-            else:
-                try:
-                    if "." in value:
-                        value = float(value)
-                    else:
-                        value = int(value)
-                except ValueError:
-                    continue
-            params[key] = value
-        new_instance = HBNBCommand.classes[class_name]()
-        storage.save()
-        new_instance.__dict__.update(params)
-        print(new_instance.id)
+        params[key] = value
+    new_instance = HBNBCommand.classes[class_name]()
+    storage.save()
+    new_instance.__dict__.update(params)
+    print(new_instance.id)
+
+
+def help_create(self):
+    """ Help information for the create method """
+    print("Creates a class of any type")
+    print("[Usage]: create <className>\n")
 
     def help_create(self):
         """ Help information for the create method """
@@ -381,4 +384,3 @@ class HBNBCommand(cmd.Cmd):
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
-    
