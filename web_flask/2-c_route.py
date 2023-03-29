@@ -1,28 +1,24 @@
-<<<<<<< HEAD
-1
-=======
 #!/usr/bin/python3
-"""script that starts a flask application"""
-from flask import Flask
+
+from flask import Flask, escape
 
 app = Flask(__name__)
 
 
 @app.route('/', strict_slashes=False)
-def hello():
-    return "Hello HBNB!"
+def index():
+    return 'Hello HBNB!'
 
 
 @app.route('/hbnb', strict_slashes=False)
 def hbnb():
-    return "HBNB"
+    return 'HBNB'
 
 
 @app.route('/c/<text>', strict_slashes=False)
-def cis(text):
-    return "C {}".format(text.replace("_", " "))
+def c(text):
+    return 'C {}'.format(escape(text.replace('_', ' ')))
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port='5000')
->>>>>>> 20ee44c886a05ea7e03b8a77b6571e8c92eb71b8
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
